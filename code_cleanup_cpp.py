@@ -14,6 +14,11 @@ import sys
 import os
 
 def recursively_clean(dir_name):
+	# if file, clean file
+	if os.path.isfile(dir_name):
+		if is_cpp_file(dir_name):
+			clean_file(dir_name)
+
 	# recursively walk through directory
 	for path, dir_names, file_names in os.walk(dir_name):
 		# ignore any git directories
@@ -21,11 +26,16 @@ def recursively_clean(dir_name):
 			for fname in file_names:
 				# only clean C++ header or cpp files
 				if is_cpp_file(fname):
-					clean_file(path, fname)
+					clean_file(fname, path)
 
-def clean_file(path_name, file_name):
+def clean_file(file_name, path_name=""):
 	# get full file name
-	fname = path_name + file_name
+	fname = path_name + "/" + file_name
+	# make sure only one slash
+	fname = fname.replace("//", "/")
+	# remove leading slash, if any
+	if fname.find("/") == 0:
+		fname = fname[1:]
 	print("cleaning file", fname)
 
 	# open file for reading
